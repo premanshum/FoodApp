@@ -5,14 +5,17 @@ useRef -
 This is used to access a child imperatively.
 
 function TextInputWithFocusButton() {
-  const inputEl = useRef(null);
+
+  const inputEl = useRef(null); // Declare a Ref
+
   const onButtonClick = () => {
     // `current` points to the mounted text input element
-    inputEl.current.focus();
+    inputEl.current.focus(); // Use the ref
   };
+
   return (
     <>
-      <input ref={inputEl} type="text" />
+      <input ref={inputEl} type="text" /> // Hook up the ref
       <button onClick={onButtonClick}>Focus the input</button>
     </>
   );

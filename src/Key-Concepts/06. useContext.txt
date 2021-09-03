@@ -62,9 +62,7 @@ Custom context provider -
 
 We can create a custom component that provides the context. For example,
 
-  const AuthContextProvider = (props) =>{
-
-    
+  const AuthContextProvider = (props) =>{    
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     
     const loginHandler = (email, password) => {
@@ -78,7 +76,7 @@ We can create a custom component that provides the context. For example,
       localStorage.setItem('isLoggedIn', '0');
       setIsLoggedIn(false);
     };
-      `                    `
+
     return (
       <AuthContext.provider value={
       {
@@ -90,3 +88,7 @@ We can create a custom component that provides the context. For example,
     </AuthContext.provider>
     );
   }
+
+In index.html, we need to wrap the App component.
+
+  <AuthContextProvider> <App /> </AuthContextProvider>
