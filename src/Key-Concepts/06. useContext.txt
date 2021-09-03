@@ -1,0 +1,92 @@
+============
+useContext -
+============
+
+This is used to reduce the props chaining. A value which might be used in deeper components, 
+is usually passed around using props. This creates unnecessary chaining of components. 
+For example, the login information is passed around from one component to the other 
+using the props. From the login page it has to travel all the way up to the app (root) and then
+passed down to the component (like a user specific page, shopping cart etc) that will need the
+login information.
+
+useContext solves this problem. we use createContext to create a context.
+
+  const AuthContext = React.createContext{
+    isLoggedIn : false,
+    userName : '',
+    setLogin()
+  };
+
+The context object can hold anything from string literals, array, objects or functions.
+
+
+To use the context in a component, we need to import it. Then we need to provide it, which means
+wrapping the component which need the context. And finally a hook into the context to listen to it.
+Any component which is not wrapped, will not be able to listen to the context.
+
+
+In the below code the MainHeader, Login and Home components are wrapped inside Context provider.
+These components and their children can access the context object.
+
+  <AuthContext.provider value={
+    {
+      isLoggedIn : isUserLoggedIn,
+      userName : loggedInUserName,
+    }
+  }>
+    <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+    <main>
+      {!isLoggedIn && <Login onLogin={loginHandler} />}
+      {isLoggedIn && <Home onLogout={logoutHandler} />}
+    </main>
+  </AuthContext.provider>
+
+
+To access the context object, we need to use 'useContext' hook.
+
+  const Navigation = (props) => {
+    const ctx = useContext(AuthContext);
+    return (
+      <div>
+        {ctx.userName} login status : {ctx.isLoggedIn}
+        <button onClick={ctx.setLogin}>Sign In</button>
+      </div>
+    );
+  };
+
+
+
+=========================
+Custom context provider -
+=========================
+
+We can create a custom component that provides the context. For example,
+
+  const AuthContextProvider = (props) =>{
+
+    
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    
+    const loginHandler = (email, password) => {
+      // We should of course check email and password
+      // But it's just a dummy/ demo anyways
+      setIsLoggedIn(true);
+      localStorage.setItem('isLoggedIn', '1');
+    };
+
+    const logoutHandler = () => {
+      localStorage.setItem('isLoggedIn', '0');
+      setIsLoggedIn(false);
+    };
+      `                    `
+    return (
+      <AuthContext.provider value={
+      {
+        isLoggedIn : isUserLoggedIn,
+        userName : loggedInUserName,
+      }
+    }>
+      {props.children}
+    </AuthContext.provider>
+    );
+  }
