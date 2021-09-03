@@ -1,0 +1,73 @@
+============
+useReducer - (chapter-115)
+============
+
+It is an alternative to useState. It is preferable when we have complex state logic that involve
+multiple states or multiple ways of changing state or dependencies on previous state.
+It is a powerful state management.
+
+===================
+Reducer structure -
+===================
+const [state, dispatch] = useReducer(reducer, initialState);
+
+where 
+    initialState is the initial state of the reducer object,
+    reducer is a function of type (state, action)=>{...} and
+    dispatch is a dispatcher of action.
+
+
+for example, const [formState, setFormState] = useReducer(formStateReducer, initialFormState);
+
+  where initialState is as below -
+
+    const initialFormState = {
+      emailValue : '',
+      passwordValue : '',
+      isEmailValid: false,
+      isPasswordValid: false,
+      isFormValid : false
+    };
+
+  reducer is as below -
+
+    const formStateReducer = (state, action)=>{
+
+      console.log(state);
+      if(action.type === 'EMAIL_INPUT'){
+        return {...state,
+          emailValue : action.value,
+          isEmailValid : action.value.includes('@'),
+          isFormValid : state.isPasswordValid && action.value.includes('@')}
+      }
+
+      if(action.type === 'PASSWORD_INPUT'){
+        return {...state,
+          passwordValue : action.value,
+          isPasswordValid : action.value.length >= 7,
+          isFormValid : state.isEmailValid && action.value.length >= 7}
+      }
+
+      return {
+        emailValue : '',
+        passwordValue : '',
+        isEmailValid: false,
+        isPasswordValid: false,
+        isFormValid : false
+      };
+    };
+
+
+  and dispatcher is as below -
+  setFormState({type:'EMAIL_INPUT', value: event.target.value});
+
+  setFormState({type:'PASSWORD_INPUT', value: event.target.value})
+
+In the above example, the formState has five states to manage. These states changes on certain
+activities. The formStateReducer decides what state to change based on certain conditions.
+This is the main function which houses the logic to alter a state. This function is not triggered
+automatically. It needs a dispatcher. The setFormState dispatches a user defined action for
+certain triggers (like onClick, onBlur, setTimeout etc). The user defined action should hold enough
+information for the reducer function to carry out the job. For example, the above action holds
+type and value. The type is used in formStateReducer to identify the trigger source and the value
+is used to get the value or any other payload.

@@ -1,0 +1,84 @@
+===========
+useEffect - (chapter-109)
+===========
+
+The code written inside the main body of a function component is all about bringing something 
+on screen. It cannot have Mutations, subscriptions, timers, logging, and other side effects.
+Doing so will lead to confusing bugs and inconsistencies in the UI.
+
+Side effects are the code which have some effects, and not related to the rendering of the
+component. For example, storing data in browser, sending http request, set and manage timer.
+
+Structure of useEffect-
+
+useEffect( function, [dependencies])
+
+the function house the side effect code (eg, http request) and it is executed after every 
+component re-evaluation IF the specified dependencies are changed.
+
+  useEffect(()=>{
+    const storedUserLoginInfo = localStorage.getItem('isLoggedIn');
+    if(storedUserLoginInfo === '1'){
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+In the above code, the function, inside the useEffect, reads the localStorage and sets the
+state of IsLoggedIn to true. The above function will execute everytime after the component
+is rendered, when the dependencies are changed. However, as there are no dependencies, so
+the function will execute ONLY ONE time (first time) the component is rendered.
+
+==========================
+useEffect and dependencies
+==========================
+
+  useEffect(()=>{
+    if(emailIsValid && passwordIsValid){
+       setFormIsValid(true)
+     }
+  }, [emailIsValid, passwordIsValid])
+
+In the above code, the function executes for the first time the component is rendered
+and then executes everytime the component is re-rendered IF emailIsValid or passwordIsValid
+are changed.
+
+The dependencies are decide based on the items that being used inside the function. The function
+has dependency on emailIsValid, passwordIsValid and setFormIsValid. So all these three has to be
+used as dependency. However, the setFormIsValid function is a constant function which can never
+change, so the rest 2 gets into the dependency list.
+
+`
+You must add all "things" you use in your effect function if those "things" could change because 
+your component (or some parent component) re-rendered.
+`
+
+=================
+Timer and cleanup
+=================
+
+useEffect can use timer function to execute a function after certain intervals. For example,
+after every 5 seconds, http request can be sent to the server to check for updates etc.
+Another example would be the suggestions that shows up when a user types anything in a text
+box. After the user type initial 4 characters, if he pauses for 500 milliseconds, then an
+http request can be fired to get a list of suggestions. Also known as debouncing.
+
+  useEffect(()=>{
+    const timer = setTimeout(() => {
+      sendHttpRequest(enteredText);
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    }
+  }, [enteredText]);
+
+In the above code, timer is set to the setTimeout function. This will execute after 500ms.
+The return statement is a clean-up. This is the syntax to write clean-ups in useEffect.
+It has to be a function. Here, the timer is being cleared.
+
+The clean-up function does not execute in the first run of the useEffect function. It runs
+subsequently after the first run, just before the component is unmounted from DOM, that is
+before the useEffect function execution.
+
+So, everytime when enteredText is changed, the old timer will be killed and a new timer is 
+set with 500ms duration. After 500ms, an http request is made for the entered text.

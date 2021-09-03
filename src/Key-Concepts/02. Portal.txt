@@ -1,0 +1,74 @@
+========
+Portal -
+========
+
+There are components which are overlays on the page. For example, Modal dialog box.
+The modal dialog box is very much part of the page and it is displayed as and when required.
+The code for the modal dialog box can appear anywhere in page html, nested within any other
+component and technically there is nothing wrong. However, it is recommended that any overlays
+should not be part of any other component. 
+These overlays should appear out of the main html code, as a separate independent code.
+
+For example:
+
+  <section>
+    <h2>Some heading</h2>
+    <div class=""my-modal>
+      <h2>A Modal Title</h2>
+    </div>
+    <form>
+      <label>UserName</label>
+      <input type=""text" />
+    </form>
+  </section>
+
+In this code the modal is a part of the section. This is not wrong, technically. 
+But this is not recommended and often leads to complex issues.
+
+The above code can be re-rendered as below, where the modal component is pulled out
+of the main html as separate code.
+
+  <div class=""my-modal>
+    <h2>A Modal Title</h2>
+  </div>
+  <section>
+    <h2>Some heading</h2>
+    <form>
+      <label>UserName</label>
+      <input type=""text" />
+    </form>
+  </section>
+
+The portal is a concept where the final outcome should look like the above html
+without much change to the React code.
+
+  return (
+    <React.Fragment>
+      <MyModal />
+      <MyInputForm />
+    </React.Fragment>
+  );
+
+Portal needs two things:
+1. A place to port the component
+2. Letting the component know where to port
+
+We start by adding 2 divs in index.html page. 
+One to hold the backdrop (common for all type of overlays) and other one to hold the
+actual overlay.
+    <div id="backdrop-root"></div>
+    <div id="overlay-root"></div>
+
+In React code, we use ReactDOM.createPortal to specify the component to port and the whereabout of
+where to port.
+
+    import ReactDom from 'react-dom';
+
+    const backdropElement = document.getElementById("backdrop-root");
+    const portalElement = document.getElementById("overlay-root");
+
+    {ReactDom.createPortal(<Backdrop onClose = {props.onBackdropClick} />, backdropElement)}
+    {ReactDom.createPortal(<ModalOverlay>{props.children}</ModalOverlay>, portalElement)}
+
+The parent component, Error Modal, will used as it is. No matter how deeply nested the Error
+component is, the html for the modal will always be on the top.

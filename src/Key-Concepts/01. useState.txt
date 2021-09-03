@@ -1,0 +1,66 @@
+==========
+useState - 
+==========
+
+To enable the state management. useState is a way of telling React compiler that some state change
+has occurred.
+eg:
+const [password, setEnteredPassword] = useState(false);
+
+In the example, the password is initialized to false when the program starts.
+The setEnteredPassword method is used to set the state. Once the setEnteredPassword method is used, 
+the whole component is rendered again.
+
+  const passwordChangeHandler = (event)=>{
+    setEnteredPassword(event.target.value);    
+  };
+
+In the above code, the passwordChangeHandler event is triggered by any action by user, which
+internally calls setEnteredPassword method. This method changes the value of password,
+and the component is rendered again with the changed value of password;
+
+
+==================
+Two way binding -
+==================
+
+Using state, we can bind the elements as two way binding. In the above example, password is
+the state which is set using setEnteredPassword. If we set the value property of the input 
+to this state, i.e. password, then it becomes two way binding.
+
+    <label htmlFor="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        value={password}
+        onChange={passwordChangeHandler}
+        onBlur={validatePasswordHandler}
+    />
+
+
+===============================
+Child-to-Parent communication -
+===============================
+
+Parent to child communication is done via props, where the values are assigned to 
+the props in the parent and retrieved in the child. Similarly, values can be passed 
+to parent from child component using props as well, however not by passing value but 
+passing the delegate functions.
+
+In Expense child component : 
+  props.onSaveExpenseData(expenseData);
+
+In NewExpense parent component :
+  const saveExpenseDataHandler = (enteredExpenseData) => {
+    const expenseData = {
+      ...enteredExpenseData,
+      id: Math.random().toString(),
+    };
+  };
+
+  <ExpenseForm onSaveExpenseData={saveExpenseDataHandler}></ExpenseForm>
+
+In the above code, the child component expects a function on the props which will take
+an expense data as parameter. The actual function is written in parent component that
+decides how to handle the data. The child only executes the function whereas the parent
+holds the logic. This way the data is passed from child to parent.
