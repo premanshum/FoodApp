@@ -8,12 +8,12 @@ const Cart = (props) => {
 
   const cartContext = useContext(CartContext);
   const cartItemAddHandler = (item) => {
-    console.log('in Cart, cartitemHandler:');
-    cartContext.addItems(item);
+    const itemToAdd = {...item, count: 1};
+    cartContext.addItem(itemToAdd);
   };
 
   const cartItemRemoveHandler = (id) => {
-
+    cartContext.removeItem(id);
   };
 
   const cartItems = <ul className={classes['cart-items']}>{

@@ -3,6 +3,16 @@ import classes from './CartItem.module.css';
 const CartItem = (props) => {
   const price = `$${props.item.price.toFixed(2)}`;
 
+  const AddButtonHandler = (event)=>{
+    event.preventDefault();
+    props.onAdd(props.item);
+  }
+
+  const RemoveButtonHandler = (event)=>{
+    event.preventDefault();
+    props.onRemove(props.item.id);
+  }
+
   return (
     <li className={classes['cart-item']}>
       <div>
@@ -13,8 +23,8 @@ const CartItem = (props) => {
         </div>
       </div>
       <div className={classes.actions}>
-        <button onClick={props.onRemove}>−</button>
-        <button onClick={props.onAdd}>+</button>
+        <button onClick={RemoveButtonHandler}>−</button>
+        <button onClick={AddButtonHandler}>+</button>
       </div>
     </li>
   );
